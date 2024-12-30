@@ -15,6 +15,7 @@ from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 from src.exception import CustomException
 from src.logger import logging
+from sklearn.model_selection import GridSearchCV
 
 
 
@@ -29,11 +30,15 @@ def save_object(file_path, obj):
         raise CustomException(e,sys)
     
 
-def evaluate_model(X_train, Y_train,X_test,Y_test,models:dict):
+def evaluate_model(X_train, Y_train,X_test,Y_test,models:dict, param:dict):
     try:
         report = {}
         for i in range(len(list(models))):
+            para = param[list(models.keys())[i]]
             model = list(models.values())[i]
+            gs = GridSearchCV(model,para, cv=4)
+            gs.fit(X_train,Y_train)
+            model.set_params(**gs.best_params_)
             model.fit(X_train, Y_train)
             y_pred = model.predict(X_test)
             r2 = r2_score(Y_test, y_pred)
