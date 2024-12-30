@@ -30,6 +30,7 @@ class DataIngestion:
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
 
             #After the folder has been created we save the imported dataset to the raw path
+            df = df.drop(['Unnamed: 0','Serial No.'], axis=1)
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
 
             #Starting Train-Test split and saving them to their respective files using their paths 
@@ -48,3 +49,4 @@ class DataIngestion:
 if __name__ == "__main__":
     obj=DataIngestion()
     obj.initiate_data_ingestion()
+
